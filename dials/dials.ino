@@ -11,8 +11,10 @@ const int scannerSwitchPin = 4;  // large switch for police scanner
 const int resetButtonPin = 3;    // reset button
 
 // Variables to store state
+const long volumeEncoderSteps = 24;
+const long channelEncoderSteps = 24;
 long lastEncoderPos = 0;
-long lastVolumePos = 0;
+long lastVolumePos = 12;
 bool lastOnOffState = HIGH;
 bool lastScannerState = HIGH;  // assume using internal pull-up so default is HIGH
 bool lastResetState = HIGH;
@@ -32,8 +34,9 @@ void loop() {
   if (newEncoderPos != lastEncoderPos) {
     lastEncoderPos = newEncoderPos;
     // Convert the encoder count to a channel index (for example, channel = encoder count modulo number of channels)
-    int channel = (int)(newEncoderPos % 24);  // assume 10 channels for instance
-    if (channel < 0) channel += 16;
+    int channel = ((int)(newEncoderPos) / 4) % channelEncoderSteps;
+
+    if (channel < 0) channel += channelEncoderSteps;
     Serial.print("CHANNEL:");
     Serial.println(channel);
     delay(100);  // small delay to avoid flooding messages
@@ -43,25 +46,13 @@ void loop() {
   if (newVolumeneEncoderPos != lastVolumePos) {
     lastVolumePos = newVolumeneEncoderPos;
     // Convert the encoder count to a channel index (for example, channel = encoder count modulo number of channels)
-    int volume = (int)(newVolumeneEncoderPos % 16);  // assume 10 channels for instance
-    if (volume < 0) volume += 16;
+    int volume = ((int)(newVolumeneEncoderPos)/4) % volumeEncoderSteps;  // assume 10 channels for instance
+    if (volume < 0) volume += volumeEncoderSteps;
     Serial.print("VOLUME:");
     Serial.println(volume);
     delay(100);  // small delay to avoid flooding messages
   }
   
-  // --- Potentiometer for volume control ---
-  /*
-  int potValue = analogRead(potPin);
-  // Map the analog value (0-1023) to a volume percentage (say 0-100)
-  int volume = map(potValue, 0, 1023, 0, 100);
-  // Only send update if there’s a significant change
-  if (abs(volume - lastPotValue) > 2) {  // adjust threshold as needed
-    lastPotValue = volume;
-    Serial.print("VOLUME:");
-    Serial.println(volume);
-    delay(50);
-  }*/
   bool onState = digitalRead(onOffSwitchPin);
   //Serial.println(onState);
   if (onState != lastOnOffState) {

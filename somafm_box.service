@@ -1,0 +1,22 @@
+[Unit]
+Description=SomaFM Box Startup Script
+Requires=sysinit.target network.target sound.target
+
+[Service]
+User=atom
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment=HOME=/home/atom
+Environment="DISPLAY=:0"
+# Try one of the following depending on your setup:
+Environment=LIBAO_DRIVER=alsa
+# Environment=LIBAO_DRIVER=pulsea
+WorkingDirectory=/home/atom/SomaFMBox
+StandardInput=null
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/python3 /home/atom/SomaFMBox/somafm_box.py
+StandardOutput=journal
+StandardError=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
