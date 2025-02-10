@@ -9,13 +9,18 @@ import signal
 SERIAL_PORT = '/dev/ttyACM0'
 BAUD_RATE = 9600
 
+print('starting the radio')
+print(f'path: {os.getcwd()}')
 
-
-channels = ["http://ice1.somafm.com/defcon-128-mp3",
+channels = ["http://ice1.somafm.com/dronezone-128-mp3",
             "http://ice1.somafm.com/secretagent-128-mp3",
             "http://ice1.somafm.com/groovesalad-128-mp3",
-            "http://ice1.somafm.com/dronezone-128-mp3",
-            "http://ice1.somafm.com/deepspaceone-128-mp3"
+            "http://ice1.somafm.com/defcon-128-mp3",
+            "http://ice1.somafm.com/deepspaceone-128-mp3",
+            "http://ice1.somafm.com/thetrip-128-mp3",
+            "http://ice1.somafm.com/beatblender-128-mp3",
+            "http://ice1.somafm.com/spacestation-128-mp3",
+            "http://ice1.somafm.com/lush-128-mp3",
 ]
 channel_ind = 0
 
@@ -36,7 +41,8 @@ def start_stream(url):
             print("Error killing process:", e)
     # Start new stream (using curl piped to mpg321)
     print("Starting stream:", url)
-    current_process = subprocess.Popen(["bash", "-c", f"curl -s {url} 2>&1 | mpg321 -"],
+    #also tried; #mpv -"],#mpg321 -"], -a hw:3,0
+    current_process = subprocess.Popen(["bash", "-c", f"curl -s {url} 2>&1 | mpg321 -a plughw:3,0 -"],
                                         preexec_fn=os.setsid)
     print("Started process with PID:", current_process.pid)
 
@@ -52,7 +58,7 @@ def toggle_police_scanner_stream(start_stream):
             print("Error killing police scanner process:", e)
     elif start_stream:
         print('starting police')
-        police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -"],
+        police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -a plughw:3,0 -"],
                                         preexec_fn=os.setsid)
     
 def set_volume(volume):
