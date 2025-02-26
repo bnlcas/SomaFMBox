@@ -42,7 +42,8 @@ def start_stream(url):
     # Start new stream (using curl piped to mpg321)
     print("Starting stream:", url)
     #also tried; #mpv -"],#mpg321 -"], -a hw:3,0
-    current_process = subprocess.Popen(["bash", "-c", f"curl -s {url} 2>&1 | mpg321 -a plughw:3,0 -"],
+    # -a plughw:3,0    
+    current_process = subprocess.Popen(["bash", "-c", f"curl -s {url} 2>&1 | mpg321 -"],
                                         preexec_fn=os.setsid)
     print("Started process with PID:", current_process.pid)
 
@@ -57,14 +58,14 @@ def toggle_police_scanner_stream(start_stream):
         except Exception as e:
             print("Error killing police scanner process:", e)
     elif start_stream:
-        print('starting police')
-        police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -a plughw:3,0 -"],
+        print('starting police') #["bash", "-c", fcurl -s {police_scanner_url} 2>&1 | mpg321 -a plughw:3,0 -"],        
+        police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -"],
                                         preexec_fn=os.setsid)
     
 def set_volume(volume):
     # This example uses 'amixer' to set the Master volume. Adjust as necessary.
     print(f"Setting volume to {volume}%")
-    subprocess.call(["amixer", "set", "Master", f"{volume}%"])
+    subprocess.call(["amixer", "-c", "3", "set", "PCM", f"{volume}%"])
 
 def terminate_stream():
     # Restart the stream. In this example, we just kill the process; you could also call start_stream() with a default channel.
