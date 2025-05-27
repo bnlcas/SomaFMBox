@@ -4,6 +4,7 @@ import serial
 import subprocess
 import os
 import signal
+from weather_forecast import WeatherForecast
 
 # /dev/ttyACM0 or /dev/ttyUSB0)
 SERIAL_PORT = '/dev/ttyACM0'
@@ -29,6 +30,8 @@ police_scanner_url = "http://ice1.somafm.com/scanner-128-mp3"
 # Globals for streaming processes
 current_process = None
 police_scanner_process = None
+
+weather_forecast = WeatherForecast()
 
 def start_stream(url):
     global current_process
@@ -58,6 +61,8 @@ def toggle_police_scanner_stream(start_stream):
         except Exception as e:
             print("Error killing police scanner process:", e)
     elif start_stream:
+        if(time.localtime().tm_hour < 11):
+            weather_forecast.speak_todays_forecast()
         print('starting police') #["bash", "-c", fcurl -s {police_scanner_url} 2>&1 | mpg321 -a plughw:3,0 -"],        
         police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -"],
                                         preexec_fn=os.setsid)
