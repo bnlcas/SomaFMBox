@@ -44,6 +44,19 @@ void loop() {
 
   long newVolumeneEncoderPos = volumeEncoder.read();
   if (newVolumeneEncoderPos != lastVolumePos) {
+
+    long deltaVolume = newVolumeneEncoderPos - lastVolumePos;
+
+    if deltaVolume < -1 {
+      deltaVolume = 1
+    }
+    if deltaVolume > 1 {
+      deltaVolume = -1;
+    } 
+    Serial.print("DELTA_VOLUME:");
+    Serial.println(deltaVolume);
+    delay(100);  // small delay to avoid flooding messages
+    /*
     lastVolumePos = newVolumeneEncoderPos;
     // Convert the encoder count to a channel index (for example, channel = encoder count modulo number of channels)
     int volume = ((int)(newVolumeneEncoderPos)/4) % volumeEncoderSteps;  // assume 10 channels for instance
@@ -51,6 +64,7 @@ void loop() {
     Serial.print("VOLUME:");
     Serial.println(volume);
     delay(100);  // small delay to avoid flooding messages
+    */
   }
   
   bool onState = digitalRead(onOffSwitchPin);

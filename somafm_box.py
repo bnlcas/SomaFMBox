@@ -24,6 +24,7 @@ channels = ["http://ice1.somafm.com/dronezone-128-mp3",
             "http://ice1.somafm.com/lush-128-mp3",
 ]
 channel_ind = 0
+system_volume = 20
 
 police_scanner_url = "http://ice1.somafm.com/scanner-128-mp3"
 
@@ -95,6 +96,7 @@ def main():
     global police_scanner_process
     global channels
     global channel_ind
+    global system_volume
     # Open serial port
     ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
     time.sleep(2)  # wait for Arduino to reset if needed
@@ -121,10 +123,20 @@ def main():
                         print("Invalid channel number.")
                 elif line.startswith("VOLUME:"):
                     try:
-                        volume = 100 - int(line.split(":")[1])*4
+                        volume = (20 + (100 - int(line.split(":")[1])*4)) % 100
                         set_volume(volume)
                     except ValueError:
                         print("Invalid volume value.")
+                elif line.startswith("DELTA_VOLUME:"):
+                    try:
+                        system_volume +=  int(line.split(":")[1])*4
+                        if(system_volume > 100):
+                            system_volume -= 100
+                        if(system_volume < 0):
+                            system_volume += 100
+                        set_volume(system_volume)
+                    except ValueError:
+                        print("wrong system volume")
                 elif line == "SCANNER_ON":
                     toggle_police_scanner_stream(True)
                 elif line == "SCANNER_OFF":
