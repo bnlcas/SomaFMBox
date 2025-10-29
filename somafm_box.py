@@ -14,6 +14,7 @@ print('starting the radio')
 print(f'path: {os.getcwd()}')
 
 channels = ["http://ice1.somafm.com/dronezone-128-mp3",
+            "file:golden_record_sounds.wav",
             "http://ice1.somafm.com/secretagent-128-mp3",
             "http://ice1.somafm.com/groovesalad-128-mp3",
             "http://ice1.somafm.com/defcon-128-mp3",
@@ -51,7 +52,25 @@ def start_stream(url):
                                         preexec_fn=os.setsid)
     print("Started process with PID:", current_process.pid)
 
+def start_file_stream(filename):
+    global current_process
+    # If a process is running, kill it
+    if current_process is not None:
+        try:
+            os.killpg(os.getpgid(current_process.pid), signal.SIGTERM)
+            #current_process.kill()
+        except Exception as e:
+            print("Error killing process:", e)
+    # Start new stream (using curl piped to mpg321)
+    #also tried; #mpv -"],#mpg321 -"], -a hw:3,0
+    # -a plughw:3,0
+    filepath = '/home/atom/SomaFMBox/assets/' + filename
+    track_time = int(time.time() % 6602)
+    current_process = subprocess.Popen(["bash", "-c", f"mpv {filepath} --start={track_time} --loop-file=inf"],
+                                        preexec_fn=os.setsid)
+    print("Started process with PID:", current_process.pid)
     
+
 def toggle_police_scanner_stream(start_stream):
     global police_scanner_process
     if (police_scanner_process is not None) and (not start_stream):
@@ -68,8 +87,10 @@ def toggle_police_scanner_stream(start_stream):
         police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -"],
                                         preexec_fn=os.setsid)
     
-def set_volume(volume):
+def set_volume(volume, invert = True):
     # This example uses 'amixer' to set the Master volume. Adjust as necessary.
+    if invert:
+        volume = 100 - volume
     print(f"Setting volume to {volume}%")
     subprocess.call(["amixer", "-c", "3", "set", "PCM", f"{volume}%"])
 
@@ -117,13 +138,16 @@ def main():
                         channel_ind = channel_ind % len(channels)
                         if(channel_ind < 0):
                             channel_ind += len(channels)
-                        start_stream(channels[channel_ind])
+                        if(channels[channel_ind].split(':')[0] == 'file'):
+                            start_file_stream(channels[channel_ind].split(':')[1])
+                        else:
+                            start_stream(channels[channel_ind])
                         print(f'Set to channel {channel_ind}')
                     except ValueError:
                         print("Invalid channel number.")
                 elif line.startswith("VOLUME:"):
                     try:
-                        volume = (20 + (100 - int(line.split(":")[1])*4)) % 100
+                        volume = int(line.split(":")[1])
                         set_volume(volume)
                     except ValueError:
                         print("Invalid volume value.")

@@ -25,5 +25,8 @@ The device contains the following components:
 The final result is shown below:
 ![image](./assets/soma_fm_box.jpg)
 
+## Weather
+I found it helpful to have a readout of the weather forecast in the morning.
+This can be disabled if you don't like it.
 
 

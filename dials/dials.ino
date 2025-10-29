@@ -1,3 +1,4 @@
+/*
 #include <Encoder.h>
 
 // Example: Rotary Encoder connected to pins 2 and 3
@@ -56,15 +57,6 @@ void loop() {
     Serial.print("DELTA_VOLUME:");
     Serial.println(deltaVolume);
     delay(100);  // small delay to avoid flooding messages
-    /*
-    lastVolumePos = newVolumeneEncoderPos;
-    // Convert the encoder count to a channel index (for example, channel = encoder count modulo number of channels)
-    int volume = ((int)(newVolumeneEncoderPos)/4) % volumeEncoderSteps;  // assume 10 channels for instance
-    if (volume < 0) volume += volumeEncoderSteps;
-    Serial.print("VOLUME:");
-    Serial.println(volume);
-    delay(100);  // small delay to avoid flooding messages
-    */
   }
   
   bool onState = digitalRead(onOffSwitchPin);
@@ -110,3 +102,5 @@ void loop() {
   
   // Add additional sensors/controls as desired...
 }
+*/
+
