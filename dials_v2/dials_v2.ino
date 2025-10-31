@@ -7,14 +7,14 @@ const int encoderHighPin = A8;
 
 //Encoder channelEncoder(5, 6);
 ESP32Encoder channelEncoder;
-const long channelEncoderSteps = 24;
-long lastEncoderPos = 0;
+const int channelEncoderSteps = 24;
+int lastEncoderPos = -1;
 
 
 const int volumePotentiometerPin = A1;
-const long volumeEncoderSteps = 16;
-const long volumeStepSize = 4096 / volumeEncoderSteps;
-long lastVolumeMeasure = 100000;
+const int volumeEncoderSteps = 16;
+const int volumeStepSize = 4096 / volumeEncoderSteps;
+int lastVolumeMeasure = 100000;
 
 void setup() {
   Serial.begin(9600);
@@ -37,9 +37,11 @@ void loop() {
   // --- Rotary Encoder for channel selection ---
   digitalWrite(encoderHighPin, HIGH);
   digitalWrite(volumeHighPin, HIGH);
+  //digitalWrite(volumeGroundPin, LOW);
+
 
   
-  long newEncoderPos = channelEncoder.getCount();//channelEncoder.read();
+  int newEncoderPos = channelEncoder.getCount();//channelEncoder.read();
   if (newEncoderPos != lastEncoderPos) {
     lastEncoderPos = newEncoderPos;
     // Convert the encoder count to a channel index (for example, channel = encoder count modulo number of channels)
@@ -51,14 +53,14 @@ void loop() {
     delay(200);  // small delay to avoid flooding messages
   }
 
-  long volumeLevel = analogRead(volumePotentiometerPin);
+  int volumeLevel = analogRead(volumePotentiometerPin);
 
 
 
   if (abs(volumeLevel - lastVolumeMeasure) >  volumeStepSize){
 
     lastVolumeMeasure = volumeLevel;
-    long volume = volumeLevel / 41;// 0-100 out of 4096
+    int volume = 100 - volumeLevel / 41;//clamp to 0-100 out of 4096
     Serial.print("VOLUME:");
     Serial.println(volume);
     delay(200);  // small delay to avoid flooding messages

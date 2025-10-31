@@ -1,0 +1,94 @@
+#rename to somafm_box.service in /etc/systemd/system
+[Unit]
+Description=SomaFM Box Startup Script
+After=sysinit.target network.target sound.target multi-user.target
+
+[Service]
+User=atom
+Environment="PATH=/home/atom/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
+Environment=HOME=/home/atom
+Environment="DISPLAY=:0"
+#Environment=LIBAO_DRIVER=alsa
+#Environment=LIBAO_DRIVER=pulse
+Environment=XDG_RUNTIME_DIR=/run/user/$(id -u atom)
+
+WorkingDirectory=/home/atom/SomaFMBox
+StandardInput=null
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/python3 /home/atom/SomaFMBox/somafm_box.py
+StandardOutput=journal
+StandardError=journal
+Nice=15
+Restart=always
+
+[Install]
+WantedBy=sound.target
+
+
+
+
+
+
+[Unit]
+Description=SomaFM Box Startup Script
+After=sysinit.target network.target multi-user.target
+#sound.target 
+
+[Service]
+User=atom
+Environment="PATH=/home/atom/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
+#Environment=HOME=/home/atom
+Environment="DISPLAY=:0"
+#Environment=LIBAO_DRIVER=alsa
+#Environment=LIBAO_DRIVER=pulse
+Environment=XDG_RUNTIME_DIR=/run/user/$(id -u atom)
+
+WorkingDirectory=/home/atom/SomaFMBox
+StandardInput=null
+ExecStartPre=/bin/sleep 5
+ExecStart=/usr/bin/python3 /home/atom/SomaFMBox/somafm_box.py
+StandardOutput=journal
+StandardError=journal
+Nice=15
+Restart=always
+
+[Install]
+WantedBy=sound.target
+
+
+
+
+asound.conf:
+  GNU nano 7.2                                          /etc/asound.conf *                                                  
+defaults.pcm.card 3
+defautls.ctl.card 3
+
+pcm.!default {
+    type plug
+    slave {
+        # Use the USB speaker (card 3, device 0)
+        pcm "hw:3,0"
+        period_size 10        # Set period size (in frames)
+        buffer_size 20        # Set total buffer size (in frames, usually a multiple of period_size)
+        # You can also use period_time in microseconds if preferred, e.g.:
+        # period_time 23333     # period time in microseconds (approx. 23.3ms at 44100 Hz)
+    }
+}
+
+ctl.!default {
+    type hw
+    card 3
+}
+
+#pcm.!default {
+#    type plug
+#    slave {
+#        pcm "hw:3,3"         # Use card 0, device 0 (adjust as needed)
+#        rate 44100           # Set sample rate to 44.1 kHz
+#        period_size 1024     # Number of frames per period
+#        buffer_size 8192     # Total buffer size in frames (should be a multiple of period_size)
+#        period_time 0        # Let period_size determine the period time; alternatively, specify time in microseconds
+#    }
+#}
+
+

@@ -29,4 +29,8 @@ The final result is shown below:
 I found it helpful to have a readout of the weather forecast in the morning.
 This can be disabled if you don't like it.
 
+## V2
+I made a second iteration using different dials and a much nicer housing - some modifications were necessary and this uses `dials_v2`
 
+## Setting up the Pi
+You will need to add `./linux_config/somafm_box.txt` as a systemd service in `/etc/systemd/system/somafm_box.service`. Additionally you will need to copy `asound.conf` to `/etc/asound.conf` in order to get things playing to the right speaker on boot.

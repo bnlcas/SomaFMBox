@@ -87,7 +87,7 @@ def toggle_police_scanner_stream(start_stream):
         police_scanner_process = subprocess.Popen(["bash", "-c", f"curl -s {police_scanner_url} 2>&1 | mpg321 -"],
                                         preexec_fn=os.setsid)
     
-def set_volume(volume, invert = True):
+def set_volume(volume, invert = False):
     # This example uses 'amixer' to set the Master volume. Adjust as necessary.
     if invert:
         volume = 100 - volume
