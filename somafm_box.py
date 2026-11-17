@@ -13,21 +13,26 @@ BAUD_RATE = 9600
 print('starting the radio')
 print(f'path: {os.getcwd()}')
 
-channels = ["http://ice1.somafm.com/dronezone-128-mp3",
+#FIP urls: https://gist.github.com/harperreed/b5ceabbbbca0a79d478ec0b81f449892
+channels = ["https://somafm.com/dronezone.pls",
             "file:golden_record_sounds.wav",
-            "http://ice1.somafm.com/secretagent-128-mp3",
-            "http://ice1.somafm.com/groovesalad-128-mp3",
-            "http://ice1.somafm.com/defcon-128-mp3",
-            "http://ice1.somafm.com/deepspaceone-128-mp3",
-            "http://ice1.somafm.com/thetrip-128-mp3",
-            "http://ice1.somafm.com/beatblender-128-mp3",
-            "http://ice1.somafm.com/spacestation-128-mp3",
-            "http://ice1.somafm.com/lush-128-mp3",
+            "https://somafm.com/secretagent.pls",
+            "https://somafm.com/groovesalad.pls",
+            "https://somafm.com/defcon.pls",
+            "https://somafm.com/deepspaceone.pls",
+            "https://somafm.com/thetrip.pls",
+            "https://somafm.com/beatblender.pls",
+            "https://somafm.com/lush.pls",
+            "https://icecast.radiofrance.fr/fip-midfi.mp3?id=radiofrance",
+            "https://icecast.radiofrance.fr/fippop-midfi.mp3?id=radiofrance",
+            "https://icecast.radiofrance.fr/fipworld-midfi.mp3?id=radiofrance"
 ]
-channel_ind = 0
-system_volume = 20
 
-police_scanner_url = "http://ice1.somafm.com/scanner-128-mp3"
+channel_ind = 0
+system_volume = 25
+
+police_scanner_url = "https://somafm.com/scanner.pls"
+#"http://ice1.somafm.com/scanner-128-mp3"
 
 # Globals for streaming processes
 current_process = None
@@ -120,6 +125,7 @@ def main():
     global system_volume
     # Open serial port
     ser = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
+    set_volume(system_volume)
     time.sleep(2)  # wait for Arduino to reset if needed
     
     # Start with a default stream (say channel 0)
@@ -148,7 +154,7 @@ def main():
                 elif line.startswith("VOLUME:"):
                     try:
                         volume = int(line.split(":")[1])
-                        set_volume(volume)
+                        #set_volume(volume)
                     except ValueError:
                         print("Invalid volume value.")
                 elif line.startswith("DELTA_VOLUME:"):
